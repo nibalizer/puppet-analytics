@@ -2,7 +2,7 @@
 from datetime import datetime
 
 from elasticsearch import Elasticsearch
-from flask import Flask, request
+from flask import Flask, request, url_for
 
 es = Elasticsearch()
 app = Flask(__name__)
@@ -54,8 +54,11 @@ def hello():
     for author,modules in author_module.iteritems():
         for modulename,data in modules.iteritems():
             line = "<p>"
+            line += "<a href=\""
+            line += url_for('module_page', author=author, module=modulename)
+            line += "\">"
             line += author + "/"
-            line += modulename + " "
+            line += modulename + "</a> "
             line += str(data['events']) + " deploys"
             response += line
 
