@@ -2,7 +2,7 @@
 from datetime import datetime
 
 from elasticsearch import Elasticsearch
-from flask import Flask
+from flask import Flask, request
 
 es = Elasticsearch()
 app = Flask(__name__)
@@ -39,6 +39,18 @@ def list_events():
         response += "<p>%(timestamp)s %(author)s: %(name)s %(tags)s" % hit["_source"]
     response += "</body></html>"
     return response
+
+@app.route("/api/1/module_send", methods=['POST'])
+def recieve_data():
+    data = request.json
+    doc = {
+        'author': data['author'],
+        'name'  : data['name'],
+        'tags' : data['tags'].split(),
+        'timestamp': datetime.now(),
+    }
+    res = es.index(index="module-downloads", doc_type='modules', body=doc)
+    return str(res['created'])
 
 if __name__ == "__main__":
     app.debug = True
