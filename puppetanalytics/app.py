@@ -62,6 +62,36 @@ def hello():
     response += "</body></html>"
     return response
 
+@app.route("/<author>/<module>")
+def module_page(author, module):
+    """
+    Page to display a modules stats/data
+    """
+    response = "<html><body>"
+
+    query = {
+      "query": {
+        "bool": {
+          "must": [
+            { "match": { "name": module } },
+            { "match": { "author": author } }
+          ]
+        }
+      }
+    }
+    
+    res = es.search(index="module-downloads", body=query)
+    response += "<p>Got %d Hits:" % res['hits']['total']
+    for hit in res['hits']['hits']:
+        response += "<p>%(timestamp)s %(author)s: %(name)s %(tags)s" % hit["_source"]
+
+    return response
+
+
+
+
+
+
 @app.route("/add_dummy")
 def add_dummy():
     """
