@@ -9,7 +9,39 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    return "Hello and welcome to Puppet analytics!"
+    #res = es.search(index="module-downloads", body={"query": {"match_all": {}},
+    #"_source" : ["author", "name"]
+    #})
+    res = es.search(index="module-downloads", body= {
+    "size": "0",
+    "aggs": {
+        "group_by_author": {
+            "terms": {
+                "field": "author"
+                },
+            "aggs": {
+                "group_by_name": {
+                    "terms": {
+                        "field": "name"
+                        }
+                    }
+                }
+            }
+        }
+    })
+
+    response = "<html><body>"
+    response = "<p>Hello and welcome to Puppet Analytics!"
+    response += "<p>Found %d total module downloads" % res['hits']['total']
+    response += "<p>Found %d Authors" % len(res['aggregations']['group_by_author']['buckets'])
+
+    # I feel really stupid doing it this way, isn't there a good way?
+    modules_by_author = [ len(i['group_by_name']['buckets']) for i in res['aggregations']['group_by_author']['buckets'] ]
+    num_modules = sum(modules_by_author)
+    response += " and %d Modules" % num_modules
+
+    response += "</body></html>"
+    return response
 
 @app.route("/add_dummy")
 def add_dummy():
