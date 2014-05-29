@@ -9,9 +9,6 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    #res = es.search(index="module-downloads", body={"query": {"match_all": {}},
-    #"_source" : ["author", "name"]
-    #})
     res = es.search(index="module-downloads", body= {
     "size": "0",
     "aggs": {
@@ -36,9 +33,31 @@ def hello():
     response += "<p>Found %d Authors" % len(res['aggregations']['group_by_author']['buckets'])
 
     # I feel really stupid doing it this way, isn't there a good way?
-    modules_by_author = [ len(i['group_by_name']['buckets']) for i in res['aggregations']['group_by_author']['buckets'] ]
+    modules_by_author = [ len(author['group_by_name']['buckets']) for author in res['aggregations']['group_by_author']['buckets'] ]
     num_modules = sum(modules_by_author)
     response += " and %d Modules" % num_modules
+
+
+    author_module = {}
+
+
+    for author in res['aggregations']['group_by_author']['buckets']:
+        author_name = author['key']
+        author_module[author_name] = {}
+        for module in author['group_by_name']['buckets']:
+            module_name = module['key']
+            author_module[author_name][module_name]  = { 'events': module['doc_count']}
+
+
+    response += "<p>"
+
+    for author,modules in author_module.iteritems():
+        for modulename,data in modules.iteritems():
+            line = "<p>"
+            line += author + "/"
+            line += modulename + " "
+            line += str(data['events']) + " deploys"
+            response += line
 
     response += "</body></html>"
     return response
