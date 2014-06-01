@@ -29,7 +29,9 @@ def mainpage():
     response = "<html><body>"
     response = "<p>Hello and welcome to Puppet Analytics!"
     response += "<p>Found %d total module downloads" % res['hits']['total']
+    total_downloads = res['hits']['total']
     response += "<p>Found %d Authors" % len(authors)
+    num_authors = len(authors)
 
     # I feel really stupid doing it this way, isn't there a good way?
     modules_by_author = [
@@ -62,7 +64,8 @@ def mainpage():
             response += line
 
     response += "</body></html>"
-    return response
+    #return response
+    return render_template('mainpage.html', total_downloads=total_downloads, num_authors=num_authors, num_modules=num_modules, author_module=author_module)
 
 
 @app.route("/<author>/<module>")

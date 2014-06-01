@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block body %}
+<p> Found {{ total_downloads }} total module downloads
+<p> Found {{ num_authors }} authors and {{ num_modules }} modules
+
+<br>
+
+{% for author, modules in author_module.iteritems() %}
+  {% for modulename, data in modules.iteritems() %}
+    <p> <a href="{{ url_for('module_page', author=author, module=modulename)}}">{{ author }} / {{ modulename }} </a> {{ data.events }} deploys 
+
+  {% endfor %}
+{% endfor %}
+
+
+{% endblock %}
