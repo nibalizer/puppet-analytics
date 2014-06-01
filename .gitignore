@@ -1,2 +1,5 @@
 *.pyc
 pa
+*.swp
+*.tox
+*.egg-info
