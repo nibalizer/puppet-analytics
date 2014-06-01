@@ -67,7 +67,7 @@ def mainpage():
 
 
 @app.route("/<author>/<module>")
-def new_module_page(author, module):
+def module_page(author, module):
     """
     Page to display a modules stats/data
     """
