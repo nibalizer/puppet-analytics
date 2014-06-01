@@ -65,8 +65,9 @@ def mainpage():
     response += "</body></html>"
     return response
 
+
 @app.route("/<author>/<module>")
-def module_page(author, module):
+def new_module_page(author, module):
     """
     Page to display a modules stats/data
     """
@@ -84,13 +85,21 @@ def module_page(author, module):
     }
     
     res = es.search(index="module-downloads", body=query)
-    response += "<p>Got %d Hits:" % res['hits']['total']
+    #response += "<p>Got %d Hits:" % res['hits']['total']
+    modulename = author + '/' + module
+    hits = res['hits']['total']
+    module_downloads = []
     for hit in res['hits']['hits']:
-        response += "<p>%(timestamp)s %(author)s: %(name)s %(tags)s" % hit["_source"]
+        #response += "<p>%(timestamp)s %(author)s: %(name)s %(tags)s" % hit["_source"]
+        module_downloads.append({
+            'timestamp' : "%(timestamp)s" % hit["_source"],
+            'author'    : "%(author)s" % hit["_source"],
+            'name'      : "%(name)s" % hit["_source"],
+            'tags'      : "%(tags)s" % hit["_source"],
+        })
 
-    return response
 
-
+    return render_template('module.html', modulename=modulename, hits=hits, module_downloads=module_downloads)
 
 
 

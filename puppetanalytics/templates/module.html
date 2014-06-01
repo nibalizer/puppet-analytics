@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block body %}
+<p> <h2>{{ modulename }} </h2>
+<p> Got {{ hits }} hits
+{% for download in module_downloads %}
+
+<p> {{ download.timestamp }}  {{ download.author }} {{ download.name }} {{ download.tags }} 
+
+{% endfor %}
+
+{% endblock %}

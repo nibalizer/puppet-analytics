@@ -1,0 +1,8 @@
+<!doctype html>
+<title>Puppet Analytics</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<div class=page>
+  <h1><a href={{ url_for('mainpage') }}> Puppet Analytics</a></h1>
+  <div class=metanav>
+  {% block body %}{% endblock %}
+</div>
