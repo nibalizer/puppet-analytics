@@ -2,13 +2,13 @@
 from datetime import datetime
 
 from elasticsearch import Elasticsearch
-from flask import Flask, request, url_for
+from flask import Flask, request, url_for, render_template
 
 es = Elasticsearch()
 app = Flask(__name__)
 
 @app.route("/")
-def hello():
+def mainpage():
     res = es.search(index="module-downloads", body= {
     "size": "0",
     "aggs": {
