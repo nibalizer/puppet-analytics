@@ -3,8 +3,10 @@ from datetime import datetime
 from elasticsearch import Elasticsearch
 from flask import Flask, request, url_for, render_template
 
-es = Elasticsearch()
+import db
+
 app = Flask(__name__)
+es = Elasticsearch()
 
 
 @app.route("/")
@@ -142,6 +144,10 @@ def recieve_data():
     }
     res = es.index(index="module-downloads", doc_type='modules', body=doc)
     return str(res['created'])
+
+
+def init_database():
+    db.Base.metadata.create_all(db.engine)
 
 
 if __name__ == "__main__":
