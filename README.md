@@ -23,8 +23,8 @@ To submit a module deploy event to puppet analytics, send a curl request like th
 
 
 ```
-[nibz@nexus ~]$ curl -XPOST 'localhost:5000/api/1/module_send' 
--H "Content-Type: ication/json" -d '{
+
+[nibz@nexus ~]$ curl -XPOST '127.0.0.1:5000/api/1/module_send' -H "Content-Type: application/json" -d '{
 "author": "nibz",
 "name": "liesboard",
 "tags": "test,ci,awesome"
