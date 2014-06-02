@@ -1,0 +1,47 @@
+/* Main style sheet for puppet-analytics */
+
+body { background-color: #F0F0F0; }
+td { cursor: pointer }
+
+/* Main page styling */
+.container {
+  margin-top: 25px;
+  margin-left: 40px;
+  border-radius: 9px;
+  background-color: white;
+}
+
+.sectionTitle {
+  margin-left: 10px;
+  color: #7C6AAB;
+}
+
+.sectionSubHeader {
+  margin-left: 20px;
+}
+
+.tableDataRow:hover { background-color: #7C6AAB !important; }
+
+/* Bootstrap overrides */
+.navbar-inverse {
+  background-image: linear-gradient(to bottom,#fff,#C0C0C0);
+  border: none;
+}
+
+.navbar-nav.navbar-right:last-child {
+  margin-right: 10px;
+  color: black !important;
+}
+
+.navbar-inverse .navbar-brand {
+  margin-left: 15px;
+  color: black;
+}
+.navbar-brand:hover { color: #7C6AAB !important; }
+.navbar-inverse .navbar-nav>li>a { color: black; }
+.navbar-inverse .navbar-nav>li>a:hover {
+  color: #7C6AAB !important;
+  cursor: pointer;
+}
+
+/* End Bootstrap overrides */
