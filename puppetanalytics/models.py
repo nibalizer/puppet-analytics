@@ -46,7 +46,7 @@ class Tag(db.Base):
     __tablename__ = 'tag'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(50), unique=True)
+    value = Column(String(50), unique=True)
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, value):
+        self.value = value
