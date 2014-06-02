@@ -76,6 +76,7 @@ def module_page(author, module):
         })
 
     return render_template('module.html',
+                           author=author,
                            modulename=module,
                            hits=len(module_downloads),
                            module_downloads=module_downloads)
