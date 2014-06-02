@@ -1,13 +1,13 @@
 {% extends "layout.html" %}
 {% block body %}
-  <div id='moduleSummary'  class='col-md-5 container'>
-    <h2 class='sectionTitle'>Module Summary</h2>
+  <div id="moduleSummary"  class="col-md-5 container">
+    <h2 class="sectionTitle">Module Summary</h2>
     <div class="alert alert-success">
-      <p class='sectionSubHeader'> <span class="glyphicon glyphicon-search"></span> Found {{ total_downloads }} total module downloads from {{ num_authors }} authors and {{ num_modules }} modules:</p>
+      <p class="sectionSubHeader"> <span class="glyphicon glyphicon-search"></span> Found {{ total_downloads }} total module downloads from {{ num_authors }} authors and {{ num_modules }} modules:</p>
     </div>
     <table class="table">
       <thead>
-        <tr class='tableHeaderRow'>
+        <tr class="tableHeaderRow">
           <th>Author</th>
           <th>Module</th>
           <th>Deploys</th>
@@ -16,7 +16,7 @@
       <tbody>
         {% for author, modules in author_module.iteritems() %}
           {% for modulename, data in modules.iteritems() %}
-            <tr class='tableDataRow' onclick='document.location = "{{ url_for('module_page', author=author, module=modulename)}}";'>
+            <tr class="tableDataRow" onclick='document.location = "{{ url_for('module_page', author=author, module=modulename)}}";'>
               <td><span class="glyphicon glyphicon-user"></span>  {{ author }}</td>
               <td>{{ modulename }}</td>
               <td>{{ data.events }}</td>
@@ -26,7 +26,7 @@
       </tbody>
     </table>
   </div>
-  <div class='col-md-5 col-md-offset1 container'>
+  <div class="col-md-5 container">
     <br><br><br><br><br><br>
   </div>
 {% endblock %}
