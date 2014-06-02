@@ -5,12 +5,24 @@
     <meta charset="utf-8">
     <meta name="author" content="Spencer Krum">
     <meta name="description" content="Web application to collect and display module deploy stats">
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <script src="static/js/jquery-2.1.1.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="static/style/bootstrap.min.css">
+    <link rel="stylesheet" href="static/style/style.css">
   </head>
   <body>
-    <div class=page>
-      <h1><a href={{ url_for('mainpage') }}> Puppet Analytics</a></h1>
-      <div class=metanav>
+
+    <nav class='navbar navbar-default navbar-static-top navbar-inverse' role='navigation'>
+      <div class="navbar-header">
+        <a class="navbar-brand" href="{{ url_for('mainpage') }}">Puppet Analytics</a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="https://github.com/nibalizer/puppet-analytics">About</a></li>
+      </ul>
+    </nav>
+
+    <div class="mainpage">
+      <div class="metanav">
         {% block body %}{% endblock %}
       </div>
     </div>

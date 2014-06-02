@@ -1,0 +1,18 @@
+/* Main style sheet for puppet-analytics */
+
+body { background-color: #F8F8F8; }
+
+.navbar-inverse {
+  background-image: linear-gradient(to bottom,#fff,#C0C0C0);
+  border: none;
+}
+
+.navbar-nav.navbar-right:last-child {
+  margin-right: 0px;
+  color: black !important;
+}
+
+.navbar-inverse .navbar-brand { color: black; }
+.navbar-brand:hover { color: #7C6AAB !important; }
+.navbar-inverse .navbar-nav>li>a { color: black; }
+.navbar-inverse .navbar-nav>li>a:hover { color: #7C6AAB !important; }
