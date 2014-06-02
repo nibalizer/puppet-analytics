@@ -1,14 +1,18 @@
 from datetime import datetime
 
-from elasticsearch import Elasticsearch
 from flask import Flask, request, render_template
 
-es = Elasticsearch()
+import db
+from dbapi import (get_all_deployments,
+                   get_deployments_by_author_module,
+                   insert_raw_deployment)
+
 app = Flask(__name__)
 
 
 @app.route("/")
 def mainpage():
+    """
     res = es.search(index="module-downloads",
                     body={
                         "size": "0",
@@ -49,6 +53,8 @@ def mainpage():
                            num_authors=num_authors,
                            num_modules=num_modules,
                            author_module=author_module)
+    """
+    return "Hi"
 
 
 @app.route("/<author>/<module>")
@@ -56,32 +62,22 @@ def module_page(author, module):
     """
     Page to display a modules stats/data
     """
-    query = {
-        "query": {
-            "bool": {
-                "must": [
-                    {"match": {"name": module}},
-                    {"match": {"author": author}}
-                ]
-            }
-        }
-    }
+    deployments = get_deployments_by_author_module(db.Session(),
+                                                   author,
+                                                   module)
 
-    res = es.search(index="module-downloads", body=query)
-    hits = res['hits']['total']
     module_downloads = []
-    for hit in res['hits']['hits']:
+    for deployment in deployments:
         module_downloads.append({
-            'timestamp': "%(timestamp)s" % hit["_source"],
-            'author': "%(author)s" % hit["_source"],
-            'name': "%(name)s" % hit["_source"],
-            'tags': "%(tags)s" % hit["_source"],
+            'timestamp': deployment.occured_at,
+            'author': deployment.author.name,
+            'name': deployment.module.name,
+            'tags': [x.value for x in deployment.tags]
         })
 
     return render_template('module.html',
-                           author=author,
                            modulename=module,
-                           hits=hits,
+                           hits=len(module_downloads),
                            module_downloads=module_downloads)
 
 
@@ -91,29 +87,49 @@ def add_dummy():
     Add a dummy module download every time this is hit
     """
 
-    doc = {
-        'author': 'nibz',
-        'name': 'puppetboard',
-        'tags': ['awesome', 'ci', 'production'],
-        'timestamp': datetime.now(),
-    }
-    res = es.index(index="module-downloads", doc_type='modules', body=doc)
-    return str(res['created'])
+    insert_raw_deployment(db.Session(),
+                          'nibz',
+                          'puppetboard',
+                          ['awesome', 'ci', 'production'],
+                          datetime.now())
+    return 'True'
+
+
+@app.route("/list_events")
+def list_events():
+    """
+    Do a massive search to find all module install events
+    You probably never want to actually run this
+    """
+    deployments = get_all_deployments(db.Session())
+    response = "<html><body>"
+    response += "<p>Got %d Hits:" % len(deployments)
+    for hit in deployments:
+        response += "<p>%(timestamp)s %(author)s: %(module)s %(tags)s" % \
+            {'timestamp': hit.occured_at,
+             'author': hit.author.name,
+             'module': hit.module.name,
+             'tags': [x.value for x in hit.tags]}
+    response += "</body></html>"
+    return response
 
 
 @app.route("/api/1/module_send", methods=['POST'])
 def recieve_data():
     data = request.json
-    doc = {
-        'author': data['author'],
-        'name': data['name'],
-        'tags': data['tags'].split(),
-        'timestamp': datetime.now(),
-    }
-    res = es.index(index="module-downloads", doc_type='modules', body=doc)
-    return str(res['created'])
+    insert_raw_deployment(db.Session(),
+                          data['author'],
+                          data['name'],
+                          data['tags'].split(','),
+                          datetime.now())
+    return 'True'
+
+
+def init_database():
+    db.Base.metadata.create_all(db.engine)
 
 
 if __name__ == "__main__":
+    init_database()
     app.debug = True
     app.run()
