@@ -4,6 +4,7 @@ from elasticsearch import Elasticsearch
 from flask import Flask, request, url_for, render_template
 
 import db
+from dbapi import insert_raw_deployment
 
 app = Flask(__name__)
 es = Elasticsearch()
@@ -136,14 +137,12 @@ def list_events():
 @app.route("/api/1/module_send", methods=['POST'])
 def recieve_data():
     data = request.json
-    doc = {
-        'author': data['author'],
-        'name': data['name'],
-        'tags': data['tags'].split(),
-        'timestamp': datetime.now(),
-    }
-    res = es.index(index="module-downloads", doc_type='modules', body=doc)
-    return str(res['created'])
+    insert_raw_deployment(db.Session(),
+                          data['author'],
+                          data['name'],
+                          data['tags'].split(),
+                          datetime.now())
+    return 'WTF IS THIS API'
 
 
 def init_database():

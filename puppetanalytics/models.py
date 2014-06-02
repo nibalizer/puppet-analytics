@@ -33,6 +33,7 @@ class Deployment(db.Base):
     author_id = Column(Integer, ForeignKey('author.id'))
     module_id = Column(Integer, ForeignKey('module.id'))
     occured_at = Column(DateTime)
+    author = relationship("Author")
     tags = relationship("Tag", secondary=deployment_tag_table)
 
     def __init__(self, author_id, module_id, occured_at):

@@ -9,6 +9,7 @@ def get_author_by_name(session, author_name):
 
 def insert_or_get_model(session, model, index_key, index_value):
     inst = model(index_value)
+    session.add(inst)
     try:
         session.commit()
     except IntegrityError:
@@ -42,3 +43,5 @@ def insert_raw_deployment(session, author_name, module_name, tags, occured_at):
     deployment = Deployment(author.id, module.id, occured_at)
     deployment.tags = tags
     session.add(deployment)
+    session.commit()
+    return deployment
