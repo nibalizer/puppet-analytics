@@ -63,8 +63,12 @@ def mainpage():
             response += line
 
     response += "</body></html>"
-    #return response
-    return render_template('mainpage.html', total_downloads=total_downloads, num_authors=num_authors, num_modules=num_modules, author_module=author_module)
+
+    return render_template('mainpage.html',
+                           total_downloads=total_downloads,
+                           num_authors=num_authors,
+                           num_modules=num_modules,
+                           author_module=author_module)
 
 
 @app.route("/<author>/<module>")
