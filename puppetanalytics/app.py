@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from elasticsearch import Elasticsearch
-from flask import Flask, request, url_for, render_template
+from flask import Flask, request, render_template
 
 es = Elasticsearch()
 app = Flask(__name__)
@@ -25,11 +25,7 @@ def mainpage():
                     })
 
     authors = res['aggregations']['group_by_author']['buckets']
-    response = "<html><body>"
-    response = "<p>Hello and welcome to Puppet Analytics!"
-    response += "<p>Found %d total module downloads" % res['hits']['total']
     total_downloads = res['hits']['total']
-    response += "<p>Found %d Authors" % len(authors)
     num_authors = len(authors)
 
     # I feel really stupid doing it this way, isn't there a good way?
@@ -37,7 +33,6 @@ def mainpage():
         len(author['group_by_name']['buckets']) for author in
         res['aggregations']['group_by_author']['buckets']]
     num_modules = sum(modules_by_author)
-    response += " and %d Modules" % num_modules
 
     author_module = {}
 
@@ -48,21 +43,6 @@ def mainpage():
             module_name = module['key']
             author_module[author_name][module_name] = {
                 'events': module['doc_count']}
-
-    response += "<p>"
-
-    for author, modules in author_module.iteritems():
-        for modulename, data in modules.iteritems():
-            line = "<p>"
-            line += "<a href=\""
-            line += url_for('module_page', author=author, module=modulename)
-            line += "\">"
-            line += author + "/"
-            line += modulename + "</a> "
-            line += str(data['events']) + " deploys"
-            response += line
-
-    response += "</body></html>"
 
     return render_template('mainpage.html',
                            total_downloads=total_downloads,
@@ -119,23 +99,6 @@ def add_dummy():
     }
     res = es.index(index="module-downloads", doc_type='modules', body=doc)
     return str(res['created'])
-
-
-@app.route("/list_events")
-def list_events():
-    """
-    Do a massive search to find all module install events
-    You probably never want to actually run this
-    """
-    res = es.search(index="module-downloads",
-                    body={"query": {"match_all": {}}})
-    response = "<html><body>"
-    response += "<p>Got %d Hits:" % res['hits']['total']
-    for hit in res['hits']['hits']:
-        response += "<p>%(timestamp)s %(author)s: %(name)s %(tags)s" % \
-                    hit["_source"]
-    response += "</body></html>"
-    return response
 
 
 @app.route("/api/1/module_send", methods=['POST'])
