@@ -3,8 +3,10 @@ from sqlalchemy.exc import IntegrityError
 from models import Author, Deployment, Module, Tag
 
 
-def get_author_by_name(session, author_name):
-    return session.query(Author).filter(Author.name == author_name).one()
+def get_all_deployments(session):
+    return session.query(Deployment).\
+        join(Deployment.author).\
+        join(Deployment.tags).all()
 
 
 def insert_or_get_model(session, model, index_key, index_value):
@@ -14,7 +16,7 @@ def insert_or_get_model(session, model, index_key, index_value):
         session.commit()
     except IntegrityError:
         session.rollback()
-        return session.query(Author).filter(index_key == index_value).one()
+        return session.query(model).filter(index_key == index_value).one()
     return inst
 
 
@@ -41,7 +43,7 @@ def insert_raw_deployment(session, author_name, module_name, tags, occured_at):
     tags = insert_or_get_tags(session, tags)
 
     deployment = Deployment(author.id, module.id, occured_at)
-    deployment.tags = tags
     session.add(deployment)
+    deployment.tags = tags
     session.commit()
     return deployment

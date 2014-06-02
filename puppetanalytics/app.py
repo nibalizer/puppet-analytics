@@ -1,13 +1,12 @@
 from datetime import datetime
 
-from elasticsearch import Elasticsearch
 from flask import Flask, request, url_for, render_template
 
 import db
-from dbapi import insert_raw_deployment
+from dbapi import (get_all_deployments,
+                   insert_raw_deployment)
 
 app = Flask(__name__)
-es = Elasticsearch()
 
 
 @app.route("/")
@@ -107,14 +106,12 @@ def add_dummy():
     Add a dummy module download every time this is hit
     """
 
-    doc = {
-        'author': 'nibz',
-        'name': 'puppetboard',
-        'tags': ['awesome', 'ci', 'production'],
-        'timestamp': datetime.now(),
-    }
-    res = es.index(index="module-downloads", doc_type='modules', body=doc)
-    return str(res['created'])
+    insert_raw_deployment(db.Session(),
+                          'nibz',
+                          'puppetboard',
+                          ['awesome', 'ci', 'production'],
+                          datetime.now())
+    return 'True'
 
 
 @app.route("/list_events")
@@ -123,13 +120,15 @@ def list_events():
     Do a massive search to find all module install events
     You probably never want to actually run this
     """
-    res = es.search(index="module-downloads",
-                    body={"query": {"match_all": {}}})
+    deployments = get_all_deployments(db.Session())
     response = "<html><body>"
-    response += "<p>Got %d Hits:" % res['hits']['total']
-    for hit in res['hits']['hits']:
-        response += "<p>%(timestamp)s %(author)s: %(name)s %(tags)s" % \
-                    hit["_source"]
+    response += "<p>Got %d Hits:" % len(deployments)
+    for hit in deployments:
+        response += "<p>%(timestamp)s %(author)s: %(module)s %(tags)s" % \
+            {'timestamp': hit.occured_at,
+             'author': hit.author.name,
+             'module': hit.module.name,
+             'tags': [x.value for x in hit.tags]}
     response += "</body></html>"
     return response
 
@@ -142,7 +141,7 @@ def recieve_data():
                           data['name'],
                           data['tags'].split(),
                           datetime.now())
-    return 'WTF IS THIS API'
+    return 'True'
 
 
 def init_database():
@@ -150,5 +149,6 @@ def init_database():
 
 
 if __name__ == "__main__":
+    init_database()
     app.debug = True
     app.run()
