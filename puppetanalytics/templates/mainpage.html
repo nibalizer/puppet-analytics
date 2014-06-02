@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
-
-  <div id='moduleSummary'  class='col-md-5'>
+  <div id='moduleSummary'  class='col-md-5 container'>
     <h2 class='sectionTitle'>Module Summary</h2>
-    <p class='sectionSubHeader'> <span class="glyphicon glyphicon-search"></span> Found {{ total_downloads }} total module downloads from {{ num_authors }} authors and {{ num_modules }} modules:</p>
-
+    <div class="alert alert-success">
+      <p class='sectionSubHeader'> <span class="glyphicon glyphicon-search"></span> Found {{ total_downloads }} total module downloads from {{ num_authors }} authors and {{ num_modules }} modules:</p>
+    </div>
     <table class="table">
       <thead>
         <tr class='tableHeaderRow'>
@@ -17,7 +17,7 @@
         {% for author, modules in author_module.iteritems() %}
           {% for modulename, data in modules.iteritems() %}
             <tr class='tableDataRow' onclick='document.location = "{{ url_for('module_page', author=author, module=modulename)}}";'>
-              <td>{{ author }}</td>
+              <td><span class="glyphicon glyphicon-user"></span>  {{ author }}</td>
               <td>{{ modulename }}</td>
               <td>{{ data.events }}</td>
             </tr>
@@ -26,5 +26,7 @@
       </tbody>
     </table>
   </div>
-
+  <div class='col-md-5 col-md-offset1 container'>
+    <br><br><br><br><br><br>
+  </div>
 {% endblock %}

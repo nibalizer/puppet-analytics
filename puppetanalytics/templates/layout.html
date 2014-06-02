@@ -5,10 +5,10 @@
     <meta charset="utf-8">
     <meta name="author" content="Spencer Krum">
     <meta name="description" content="Web application to collect and display module deploy stats">
-    <script src="static/js/jquery-2.1.1.min.js"></script>
-    <script src="static/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="static/style/bootstrap.min.css">
-    <link rel="stylesheet" href="static/style/style.css">
+    <script src="{{ url_for('static', filename='js/jquery-2.1.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
   </head>
   <body>
 

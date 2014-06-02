@@ -4,7 +4,7 @@ body { background-color: #F0F0F0; }
 td { cursor: pointer }
 
 /* Main page styling */
-#moduleSummary {
+.container {
   margin-top: 25px;
   margin-left: 40px;
   border-radius: 9px;
