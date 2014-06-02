@@ -1,16 +1,30 @@
 {% extends "layout.html" %}
 {% block body %}
-<p> Found {{ total_downloads }} total module downloads
-<p> Found {{ num_authors }} authors and {{ num_modules }} modules
 
-<br>
+  <div id='moduleSummary'  class='col-md-5'>
+    <h2 class='sectionTitle'>Module Summary</h2>
+    <p class='sectionSubHeader'> <span class="glyphicon glyphicon-search"></span> Found {{ total_downloads }} total module downloads from {{ num_authors }} authors and {{ num_modules }} modules:</p>
 
-{% for author, modules in author_module.iteritems() %}
-  {% for modulename, data in modules.iteritems() %}
-    <p> <a href="{{ url_for('module_page', author=author, module=modulename)}}">{{ author }} / {{ modulename }} </a> {{ data.events }} deploys 
-
-  {% endfor %}
-{% endfor %}
-
+    <table class="table">
+      <thead>
+        <tr class='tableHeaderRow'>
+          <th>Author</th>
+          <th>Module</th>
+          <th>Deploys</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for author, modules in author_module.iteritems() %}
+          {% for modulename, data in modules.iteritems() %}
+            <tr class='tableDataRow' onclick='document.location = "{{ url_for('module_page', author=author, module=modulename)}}";'>
+              <td>{{ author }}</td>
+              <td>{{ modulename }}</td>
+              <td>{{ data.events }}</td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
 {% endblock %}
