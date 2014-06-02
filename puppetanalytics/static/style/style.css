@@ -4,9 +4,12 @@ body { background-color: #F0F0F0; }
 td { cursor: pointer }
 
 /* Main page styling */
-.container {
+
+.container { margin-left: 40px; }
+
+.container,
+#moduleMainContainer {
   margin-top: 25px;
-  margin-left: 40px;
   border-radius: 9px;
   background-color: white;
 }
@@ -21,6 +24,12 @@ td { cursor: pointer }
 }
 
 .tableDataRow:hover { background-color: #7C6AAB !important; }
+
+/* Module page styling */
+
+#moduleHitCount {
+  margin-left: 20px;
+}
 
 /* Bootstrap overrides */
 .navbar-inverse {
