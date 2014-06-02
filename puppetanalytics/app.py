@@ -4,6 +4,7 @@ from flask import Flask, request, url_for, render_template
 
 import db
 from dbapi import (get_all_deployments,
+                   get_deployments_by_author_module,
                    insert_raw_deployment)
 
 app = Flask(__name__)
@@ -71,32 +72,22 @@ def module_page(author, module):
     """
     Page to display a modules stats/data
     """
-    query = {
-        "query": {
-            "bool": {
-                "must": [
-                    {"match": {"name": module}},
-                    {"match": {"author": author}}
-                ]
-            }
-        }
-    }
+    deployments = get_deployments_by_author_module(db.Session(),
+                                                   author,
+                                                   module)
 
-    res = es.search(index="module-downloads", body=query)
-    modulename = author + '/' + module
-    hits = res['hits']['total']
     module_downloads = []
-    for hit in res['hits']['hits']:
+    for deployment in deployments:
         module_downloads.append({
-            'timestamp': "%(timestamp)s" % hit["_source"],
-            'author': "%(author)s" % hit["_source"],
-            'name': "%(name)s" % hit["_source"],
-            'tags': "%(tags)s" % hit["_source"],
+            'timestamp': deployment.occured_at,
+            'author': deployment.author.name,
+            'name': deployment.module.name,
+            'tags': [x.value for x in deployment.tags]
         })
 
     return render_template('module.html',
-                           modulename=modulename,
-                           hits=hits,
+                           modulename=module,
+                           hits=len(module_downloads),
                            module_downloads=module_downloads)
 
 

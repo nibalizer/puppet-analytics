@@ -6,7 +6,25 @@ from models import Author, Deployment, Module, Tag
 def get_all_deployments(session):
     return session.query(Deployment).\
         join(Deployment.author).\
+        join(Deployment.module).\
         join(Deployment.tags).all()
+
+
+def get_deployments_by_module(session, module_name):
+    return session.query(Deployment).\
+        join(Deployment.author).\
+        join(Deployment.module).\
+        join(Deployment.tags).\
+        filter(Module.name == module_name).all()
+
+
+def get_deployments_by_author_module(session, author_name, module_name):
+    return session.query(Deployment).\
+        join(Deployment.author).\
+        join(Deployment.module).\
+        join(Deployment.tags).\
+        filter(Author.name == author_name).\
+        filter(Module.name == module_name).all()
 
 
 def insert_or_get_model(session, model, index_key, index_value):
