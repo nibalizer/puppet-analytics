@@ -3,6 +3,14 @@ from sqlalchemy.exc import IntegrityError
 from models import Author, Deployment, Module, Tag
 
 
+def get_all_authors(session):
+    return session.query(Author).all()
+
+
+def get_all_modules(session):
+    return session.query(Module).all()
+
+
 def get_all_deployments(session):
     return session.query(Deployment).\
         join(Deployment.author).\
