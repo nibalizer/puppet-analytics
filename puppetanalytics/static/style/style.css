@@ -23,8 +23,6 @@ td { cursor: pointer }
   margin-left: 20px;
 }
 
-.tableDataRow:hover { background-color: #7C6AAB !important; }
-
 /* Module page styling */
 
 #moduleHitCount {
