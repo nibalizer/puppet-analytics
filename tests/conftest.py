@@ -1,7 +1,7 @@
 import pytest
 
 from puppetanalytics import db as _db
-from puppetanalytics.models import Author
+from puppetanalytics.models import Author, Tag
 
 
 @pytest.fixture(scope='function')
@@ -33,3 +33,11 @@ def author_joe(session):
     session.add(joe)
     session.commit()
     return joe
+
+
+@pytest.fixture(scope='function')
+def tag_1(session):
+    tag_1 = Tag('tag_1')
+    session.add(tag_1)
+    session.commit()
+    return tag_1

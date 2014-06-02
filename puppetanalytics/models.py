@@ -1,4 +1,10 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table
+from sqlalchemy import (Column,
+                        DateTime,
+                        ForeignKey,
+                        Integer,
+                        String,
+                        Table)
+from sqlalchemy.orm import relationship
 
 import db
 
@@ -13,6 +19,13 @@ class Author(db.Base):
         self.name = name
 
 
+deployment_tag_table = Table('deployment_tag', db.Base.metadata,
+                             Column('module_id',
+                                    Integer,
+                                    ForeignKey('deployment.id')),
+                             Column('right_id', Integer, ForeignKey('tag.id')))
+
+
 class Deployment(db.Base):
     __tablename__ = 'deployment'
 
@@ -20,16 +33,12 @@ class Deployment(db.Base):
     author_id = Column(Integer, ForeignKey('author.id'))
     module_id = Column(Integer, ForeignKey('module.id'))
     occured_at = Column(DateTime)
+    tags = relationship("Tag", secondary=deployment_tag_table)
 
     def __init__(self, author_id, module_id, occured_at):
         self.author_id = author_id
         self.module_id = module_id
         self.occured_at = occured_at
-
-
-module_tag_table = Table('module_tag', db.Base.metadata,
-                         Column('module_id', Integer, ForeignKey('module.id')),
-                         Column('right_id', Integer, ForeignKey('tag.id')))
 
 
 class Module(db.Base):

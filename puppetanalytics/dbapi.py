@@ -1,6 +1,6 @@
 from sqlalchemy.exc import IntegrityError
 
-from models import Author, Module, Tag
+from models import Author, Deployment, Module, Tag
 
 
 def get_author_by_name(session, author_name):
@@ -38,3 +38,7 @@ def insert_raw_deployment(session, author_name, module_name, tags, occured_at):
     author = insert_or_get_author(session, author_name)
     module = insert_or_get_module(session, module_name)
     tags = insert_or_get_tags(session, tags)
+
+    deployment = Deployment(author.id, module.id, occured_at)
+    deployment.tags = tags
+    session.add(deployment)
