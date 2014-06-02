@@ -1,8 +1,28 @@
 {% extends "layout.html" %}
 {% block body %}
-  <p> <h2>{{ modulename }} </h2>
-  <p> Got {{ hits }} hits
-  {% for download in module_downloads %}
-  <p> {{ download.timestamp }}  {{ download.author }} {{ download.name }} {{ download.tags }} 
-  {% endfor %}
+
+  <div id="moduleMainContainer" class="col-md-10 col-md-offset-1">
+    <h2>{{ modulename }}, deployed by {{ author }}</h2>
+    <p id="moduleHitCount"> {{ hits }} total deploys</p>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr class="tableHeaderRow">
+          <th>Time</th>
+          <th>Author</th>
+          <th>Module</th>
+          <th>Tags</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for download in module_downloads %}
+        <tr>
+          <td>{{ download.timestamp }}</td>
+          <td>{{ download.author }} </td>
+          <td>{{ download.name }} </td>
+          <td>{{ download.tags }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
 {% endblock %}

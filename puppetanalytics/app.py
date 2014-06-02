@@ -88,7 +88,6 @@ def module_page(author, module):
     }
 
     res = es.search(index="module-downloads", body=query)
-    modulename = author + '/' + module
     hits = res['hits']['total']
     module_downloads = []
     for hit in res['hits']['hits']:
@@ -100,7 +99,8 @@ def module_page(author, module):
         })
 
     return render_template('module.html',
-                           modulename=modulename,
+                           author=author,
+                           modulename=module,
                            hits=hits,
                            module_downloads=module_downloads)
 
