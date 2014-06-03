@@ -5,6 +5,8 @@ from flask import Flask, request, render_template
 import db
 from dbapi import (get_all_deployments,
                    get_deployments_by_author_module,
+                   get_all_modules,
+                   get_all_authors,
                    insert_raw_deployment)
 
 app = Flask(__name__)
@@ -13,48 +15,35 @@ app = Flask(__name__)
 @app.route("/")
 def mainpage():
     """
-    res = es.search(index="module-downloads",
-                    body={
-                        "size": "0",
-                        "aggs": {
-                            "group_by_author": {
-                                "terms": {"field": "author"},
-                                "aggs": {
-                                    "group_by_name": {
-                                        "terms": {"field": "name"}
-                                    }
-                                }
-                            }
-                        }
-                    })
-
-    authors = res['aggregations']['group_by_author']['buckets']
-    total_downloads = res['hits']['total']
+    Main page to display some summary stats
+    """
+    total_downloads = 0
+    modules = get_all_modules(db.Session())
+    authors = get_all_authors(db.Session())
+    num_modules = len(modules)
     num_authors = len(authors)
-
-    # I feel really stupid doing it this way, isn't there a good way?
-    modules_by_author = [
-        len(author['group_by_name']['buckets']) for author in
-        res['aggregations']['group_by_author']['buckets']]
-    num_modules = sum(modules_by_author)
-
     author_module = {}
-
-    for author in res['aggregations']['group_by_author']['buckets']:
-        author_name = author['key']
+    for module in modules:
+        author_name = module.author.name
+        module_name = module.module.name
+        events = len(get_deployments_by_author_module(db.Session(),
+                                                      author_name,
+                                                      module_name))
+        total_downloads += events
+    try:
+        author_module[author_name][module_name] = {
+            'events': events}
+    except KeyError:
         author_module[author_name] = {}
-        for module in author['group_by_name']['buckets']:
-            module_name = module['key']
-            author_module[author_name][module_name] = {
-                'events': module['doc_count']}
+        author_module[author_name][module_name] = {
+            'events': events}
 
+    print author_module
     return render_template('mainpage.html',
                            total_downloads=total_downloads,
                            num_authors=num_authors,
                            num_modules=num_modules,
                            author_module=author_module)
-    """
-    return "Hi"
 
 
 @app.route("/<author>/<module>")
