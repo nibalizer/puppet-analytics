@@ -20,15 +20,18 @@ Adding data
 
 To submit a module deploy event to puppet analytics, send a curl request like this:
 
-
-```
-
-[nibz@nexus ~]$ curl -XPOST '127.0.0.1:5000/api/1/module_send' -H "Content-Type: application/json" -d '{
+```shell
+curl -XPOST '127.0.0.1:5000/api/2/bulk_update' -H "Content-Type: application/json" -d '[
+{
 "author": "nibz",
 "name": "liesboard",
 "tags": "test,ci,awesome"
-}'
-True[nibz@nexus ~]$
+},
+{
+"author": "nibz",
+"name": "liesboard",
+"tags": "test,ci,awesome"
+}]'
 ```
 
 
@@ -37,6 +40,4 @@ Development
 -----------
 
 We congregate on freenode irc in ##puppet-analytics
-
-
 

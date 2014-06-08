@@ -123,6 +123,18 @@ def recieve_data():
     return 'True'
 
 
+@app.route("/api/2/bulk_update", methods=['POST'])
+def recieve_data_bulk():
+    data = request.json
+    for item in data:
+        insert_raw_deployment(db.Session(),
+                              item['author'],
+                              item['name'],
+                              item['tags'].split(','),
+                              datetime.now())
+    return 'True'
+
+
 def init_database():
     db.Base.metadata.create_all(db.engine)
 
