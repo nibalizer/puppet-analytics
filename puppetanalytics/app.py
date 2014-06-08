@@ -17,33 +17,19 @@ def mainpage():
     """
     Main page to display some summary stats
     """
-    total_downloads = 0
-    modules = get_all_modules(db.Session())
-    authors = get_all_authors(db.Session())
-    num_modules = len(modules)
-    num_authors = len(authors)
-    author_module = {}
-    for module in modules:
-        author_name = module.author.name
-        module_name = module.module.name
-        events = len(get_deployments_by_author_module(db.Session(),
-                                                      author_name,
-                                                      module_name))
-        total_downloads += events
-    try:
-        author_module[author_name][module_name] = {
-            'events': events}
-    except KeyError:
-        author_module[author_name] = {}
-        author_module[author_name][module_name] = {
-            'events': events}
+    deps = db.engine.execute('SELECT count(DISTINCT deployment.id) as deployment_count, author.name, module.name FROM deployment JOIN author ON author.id = deployment.author_id JOIN module ON module.id = deployment.module_id GROUP by deployment.author_id, deployment.module_id;')
+    deploy_aggregates = [ d for d in deps ]
+    
+    num_modules = len(deploy_aggregates)
+    num_authors = len(set([ row[1] for row in deploy_aggregates ]))
+    total_downloads = sum( [ row[0] for row in deploy_aggregates ] )
+    
 
-    print author_module
     return render_template('mainpage.html',
                            total_downloads=total_downloads,
                            num_authors=num_authors,
                            num_modules=num_modules,
-                           author_module=author_module)
+                           deploy_aggregates=deploy_aggregates)
 
 
 @app.route("/<author>/<module>")

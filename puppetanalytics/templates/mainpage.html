@@ -14,15 +14,14 @@
         </tr>
       </thead>
       <tbody>
-        {% for author, modules in author_module.iteritems() %}
-          {% for modulename, data in modules.iteritems() %}
-            <tr class="tableDataRow" onclick='document.location = "{{ url_for('module_page', author=author, module=modulename)}}";'>
-              <td><span class="glyphicon glyphicon-user"></span>  {{ author }}</td>
-              <td>{{ modulename }}</td>
-              <td>{{ data.events }}</td>
+       {% for module in deploy_aggregates %}
+            <tr class="tableDataRow" onclick='document.location = "{{ url_for('module_page', author=module[1], module=module[2])}}";'>
+              <td><span class="glyphicon glyphicon-user"></span>  {{ module[1] }}</td>
+              <td>{{ module[2] }}</td>
+              <td>{{ module[1] }}</td>
             </tr>
-          {% endfor %}
         {% endfor %}
+          
       </tbody>
     </table>
   </div>
