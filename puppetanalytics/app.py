@@ -67,7 +67,7 @@ def add_dummy():
     """
 
     insert_raw_deployment(db.Session(),
-                          'bond',
+                          'nibz',
                           'puppetboard',
                           ['awesome', 'ci', 'production'],
                           datetime.now())
