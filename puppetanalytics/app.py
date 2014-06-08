@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 
 from flask import Flask, request, render_template
 
@@ -110,5 +111,11 @@ def init_database():
 
 if __name__ == "__main__":
     init_database()
-    app.debug = True
+    # Load production settings by default
+    app.config.from_object('puppetanalytics.settings.ProductionSettings')
+    # Override default settings if PUPPETANALYTICS_SETTINGS is set to class
+    # inherited from Settings class, e.g. run development mode with
+    # PUPPETANALYTICS_SETTINGS=puppetanalytics.settings.DevelopmentSettings
+    if os.environ.get('PUPPETANALYTICS_SETTINGS') is not None:
+        app.config.from_object(os.environ['PUPPETANALYTICS_SETTINGS'])
     app.run()

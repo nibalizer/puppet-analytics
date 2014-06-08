@@ -5,5 +5,5 @@ from sqlalchemy.orm import sessionmaker
 import settings
 
 Base = declarative_base()
-engine = create_engine(settings.sqlite_db, echo=True)
+engine = create_engine(settings.Settings.sqlite_db, echo=True)
 Session = sessionmaker(bind=engine)
