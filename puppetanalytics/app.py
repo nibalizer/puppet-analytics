@@ -4,11 +4,11 @@ from flask import Flask, request, render_template
 
 import db
 from dbapi import (get_all_authors_count,
+                   get_all_deployments,
                    get_all_deployments_count,
                    get_all_module_author_combination_count,
                    get_deployments_by_author_module,
                    get_deployment_count_for_all_author_modules,
-                   get_all_authors,
                    insert_raw_deployment)
 
 app = Flask(__name__)

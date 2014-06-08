@@ -1,11 +1,7 @@
-from sqlalchemy import distinct, func
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 
 from models import Author, Deployment, Module, Tag
-
-
-def get_all_authors(session):
-    return session.query(Author).all()
 
 
 def get_all_authors_count(session):
