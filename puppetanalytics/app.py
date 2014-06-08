@@ -3,9 +3,11 @@ from datetime import datetime
 from flask import Flask, request, render_template
 
 import db
-from dbapi import (get_all_deployments,
+from dbapi import (get_all_authors_count,
+                   get_all_deployments_count,
+                   get_all_module_author_combination_count,
                    get_deployments_by_author_module,
-                   get_all_modules,
+                   get_deployment_count_for_all_author_modules,
                    get_all_authors,
                    insert_raw_deployment)
 
@@ -17,19 +19,20 @@ def mainpage():
     """
     Main page to display some summary stats
     """
-    deps = db.engine.execute('SELECT count(DISTINCT deployment.id) as deployment_count, author.name, module.name FROM deployment JOIN author ON author.id = deployment.author_id JOIN module ON module.id = deployment.module_id GROUP by deployment.author_id, deployment.module_id;')
-    deploy_aggregates = [ d for d in deps ]
-    
-    num_modules = len(deploy_aggregates)
-    num_authors = len(set([ row[1] for row in deploy_aggregates ]))
-    total_downloads = sum( [ row[0] for row in deploy_aggregates ] )
-    
+    session = db.Session()
+    aggregates = get_deployment_count_for_all_author_modules(session)
+    total_authors = get_all_authors_count(session)
+    total_downloads = get_all_deployments_count(session)
+    total_modules = get_all_module_author_combination_count(session)
+    aggregates = [(agg[0],
+                   agg[1].author.name,
+                   agg[1].module.name) for agg in aggregates]
 
     return render_template('mainpage.html',
                            total_downloads=total_downloads,
-                           num_authors=num_authors,
-                           num_modules=num_modules,
-                           deploy_aggregates=deploy_aggregates)
+                           total_authors=total_authors,
+                           total_modules=total_modules,
+                           deploy_aggregates=aggregates)
 
 
 @app.route("/<author>/<module>")
@@ -64,7 +67,7 @@ def add_dummy():
     """
 
     insert_raw_deployment(db.Session(),
-                          'nibz',
+                          'bond',
                           'puppetboard',
                           ['awesome', 'ci', 'production'],
                           datetime.now())

@@ -1,3 +1,4 @@
+from sqlalchemy import distinct, func
 from sqlalchemy.exc import IntegrityError
 
 from models import Author, Deployment, Module, Tag
@@ -7,10 +8,18 @@ def get_all_authors(session):
     return session.query(Author).all()
 
 
-def get_all_modules(session):
+def get_all_authors_count(session):
+    return session.query(Author).count()
+
+
+def get_all_deployments_count(session):
+    return session.query(Deployment).count()
+
+
+def get_all_module_author_combination_count(session):
     return session.query(Deployment).\
         join(Author).join(Module).\
-        group_by(Author.name, Module.name).all()
+        group_by(Author.name, Module.name).count()
 
 
 def get_all_deployments(session):
@@ -35,6 +44,14 @@ def get_deployments_by_author_module(session, author_name, module_name):
         join(Deployment.tags).\
         filter(Author.name == author_name).\
         filter(Module.name == module_name).all()
+
+
+def get_deployment_count_for_all_author_modules(session):
+    return session.query(func.count(Deployment.id),
+                         Deployment).\
+        join(Deployment.author).\
+        join(Deployment.module).\
+        group_by(Author.name, Module.name).all()
 
 
 def insert_or_get_model(session, model, index_key, index_value):
