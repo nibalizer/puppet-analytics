@@ -3,6 +3,11 @@
 body { background-color: #F0F0F0; }
 td { cursor: pointer }
 
+/* navbar elements */
+
+#privacyButton { cursor: pointer; }
+#privacyButton:hover { color: #006600 !important; }
+
 /* Main page styling */
 
 .container { margin-left: 50px; }
@@ -24,6 +29,19 @@ td { cursor: pointer }
 }
 
 /* Module page styling */
+
+.emphasisWord {
+  color: #006600;
+}
+
+#moduleTitleContainer {
+  margin-left: 70px;
+}
+
+#moduleTitleContainer h2 {
+  margin-top: 5px;
+  margin-left: 10px;
+}
 
 #moduleHitCount {
   margin-left: 20px;
@@ -67,6 +85,10 @@ td { cursor: pointer }
 .navbar-inverse .navbar-nav>li>a:hover {
   color: #006600 !important;
   cursor: pointer;
+}
+
+#footer {
+  min-height: 25px;
 }
 
 /* End Bootstrap overrides */
