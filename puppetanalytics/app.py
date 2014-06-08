@@ -123,15 +123,18 @@ def recieve_data():
     return 'True'
 
 
-@app.route("/api/2/bulk_update", methods=['POST'])
+@app.route("/api/2/deployments", methods=['POST'])
 def recieve_data_bulk():
     data = request.json
+    session = db.Session()
     for item in data:
-        insert_raw_deployment(db.Session(),
+        insert_raw_deployment(session,
                               item['author'],
                               item['name'],
                               item['tags'].split(','),
                               datetime.now())
+
+    session.commit()
     return 'True'
 
 
