@@ -1,28 +1,27 @@
 {% extends "layout.html" %}
 {% block body %}
 
-  <div id="moduleMainContainer" class="col-md-10 col-md-offset-1">
-    <h2>{{ modulename }}, deployed by {{ author }}</h2>
-    <p id="moduleHitCount"> {{ hits }} total deploys</p>
-    <table class="table table-striped table-hover">
-      <thead>
-        <tr class="tableHeaderRow">
-          <th>Time</th>
-          <th>Author</th>
-          <th>Module</th>
-          <th>Tags</th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for download in module_downloads %}
-        <tr>
-          <td>{{ download.timestamp }}</td>
-          <td>{{ download.author }} </td>
-          <td>{{ download.name }} </td>
-          <td>{{ download.tags }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
+    <div class='row'>
+      <div id='deployTrendsContainer' class='col-md-5 col-md-offset-1 container'>
+        <h3 class='sectionTitle'>Deployment Trends</h2>
+      </div>
+      <div id='coreStatsContainer' class='col-md-5 col-md-offset-1 container'>
+        <h3 class='sectionTitle'>Core Stats</h2>
+      </div>
+    </div>
+
+    <div class='row'>
+      <div id='totalDeploysContainer' class='col-md-5 col-md-offset-1 container'>
+        <h3 class='sectionTitle'>Total Deployments</h2>
+      </div>
+      <div id='tagsChartContainer' class='col-md-5 col-md-offset-1 container'>
+        <h3 class='sectionTitle'>Tag Stats</h2>
+      </div>
+    </div>
+
+    <div class='row'>
+      <div id='dailyDeploysContainer' class='col-md-5 col-md-offset-1 container'>
+        <h3 class='sectionTitle'>Daily Stats</h2>
+      </div>
+    </div>
 {% endblock %}
