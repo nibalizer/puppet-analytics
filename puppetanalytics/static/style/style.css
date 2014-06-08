@@ -35,7 +35,7 @@ td { cursor: pointer }
 }
 
 #moduleTitleContainer {
-  margin-left: 70px;
+  margin-left: 50px;
 }
 
 #moduleTitleContainer h2 {
@@ -62,8 +62,6 @@ td { cursor: pointer }
   height: 400px;
   display: inline;
 }
-
-
 
 /* Bootstrap overrides */
 .navbar-inverse {
