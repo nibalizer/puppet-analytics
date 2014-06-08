@@ -1,9 +1,32 @@
 from datetime import datetime
 
-from puppetanalytics.dbapi import (get_all_deployments,
+from puppetanalytics.dbapi import (get_all_authors_count,
+                                   get_all_deployments,
+                                   get_all_deployments_count,
+                                   get_all_module_author_combination_count,
                                    get_deployments_by_author_module,
                                    get_deployments_by_module,
                                    insert_raw_deployment)
+
+
+def test_get_all_authors_count_zero(session):
+    assert get_all_authors_count(session) == 0
+
+
+def test_get_all_authors_count_one(session, author_joe):
+    assert get_all_authors_count(session) == 1
+
+
+def test_get_all_deployments_count_none(session):
+    assert get_all_deployments_count(session) == 0
+
+
+def test_get_all_deployments_count_one(session, deployment_1):
+    assert get_all_deployments_count(session) == 1
+
+
+def test_get_all_module_author_combinations_count(session, deployment_1):
+    assert get_all_module_author_combination_count(session) == 1
 
 
 def test_get_all_deploymens(session, deployment_1):

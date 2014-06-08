@@ -3,8 +3,12 @@ from datetime import datetime
 from flask import Flask, request, render_template
 
 import db
-from dbapi import (get_all_deployments,
+from dbapi import (get_all_authors_count,
+                   get_all_deployments,
+                   get_all_deployments_count,
+                   get_all_module_author_combination_count,
                    get_deployments_by_author_module,
+                   get_deployment_count_for_all_author_modules,
                    insert_raw_deployment)
 
 app = Flask(__name__)
@@ -13,48 +17,22 @@ app = Flask(__name__)
 @app.route("/")
 def mainpage():
     """
-    res = es.search(index="module-downloads",
-                    body={
-                        "size": "0",
-                        "aggs": {
-                            "group_by_author": {
-                                "terms": {"field": "author"},
-                                "aggs": {
-                                    "group_by_name": {
-                                        "terms": {"field": "name"}
-                                    }
-                                }
-                            }
-                        }
-                    })
-
-    authors = res['aggregations']['group_by_author']['buckets']
-    total_downloads = res['hits']['total']
-    num_authors = len(authors)
-
-    # I feel really stupid doing it this way, isn't there a good way?
-    modules_by_author = [
-        len(author['group_by_name']['buckets']) for author in
-        res['aggregations']['group_by_author']['buckets']]
-    num_modules = sum(modules_by_author)
-
-    author_module = {}
-
-    for author in res['aggregations']['group_by_author']['buckets']:
-        author_name = author['key']
-        author_module[author_name] = {}
-        for module in author['group_by_name']['buckets']:
-            module_name = module['key']
-            author_module[author_name][module_name] = {
-                'events': module['doc_count']}
+    Main page to display some summary stats
+    """
+    session = db.Session()
+    aggregates = get_deployment_count_for_all_author_modules(session)
+    total_authors = get_all_authors_count(session)
+    total_downloads = get_all_deployments_count(session)
+    total_modules = get_all_module_author_combination_count(session)
+    aggregates = [(agg[0],
+                   agg[1].author.name,
+                   agg[1].module.name) for agg in aggregates]
 
     return render_template('mainpage.html',
                            total_downloads=total_downloads,
-                           num_authors=num_authors,
-                           num_modules=num_modules,
-                           author_module=author_module)
-    """
-    return "Hi"
+                           total_authors=total_authors,
+                           total_modules=total_modules,
+                           deploy_aggregates=aggregates)
 
 
 @app.route("/<author>/<module>")
