@@ -1,8 +1,23 @@
 from datetime import datetime
+
 import pytest
 
 from puppetanalytics import db as _db
+from puppetanalytics.app import app as _app
 from puppetanalytics.models import Author, Deployment, Module, Tag
+
+
+@pytest.fixture(scope='session')
+def app(request):
+    _app.config.from_object('puppetanalytics.settings.TestingSettings')
+    ctx = _app.app_context()
+    ctx.push()
+
+    def teardown():
+        ctx.pop()
+    
+    request.addfinalizer(teardown)
+    return _app
 
 
 @pytest.fixture(scope='function')

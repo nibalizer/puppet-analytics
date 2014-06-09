@@ -2,8 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-import settings
-
 Base = declarative_base()
-engine = create_engine(settings.Settings.sqlite_db, echo=True)
+engine = create_engine('sqlite:////tmp/puppetanalytics.sqlite',
+                       echo=False)
 Session = sessionmaker(bind=engine)
