@@ -60,7 +60,27 @@ def module_page(author, module):
             'tags': [x.value for x in deployment.tags]
         })
 
+    # Divide all deploys into five buckets, send to c3.js
+
+    bucket_number = 7
+    times = [i['timestamp'] for i in module_downloads]
+    times.sort()
+    base = min(times)
+    diff = datetime.now() - base
+    delta = diff / bucket_number
+    buckets = [0] * bucket_number
+    for time in times:
+        index = (time - base).microseconds / delta.microseconds
+        buckets[index] += 1
+
+    ys = buckets
+    xs = []
+    for x in range(bucket_number):
+        xs.append(int((base + (delta * x)).strftime('%s')))
+
     return render_template('module.html',
+                           xs=xs,
+                           ys=ys,
                            author=author,
                            modulename=module,
                            hits=len(module_downloads),
