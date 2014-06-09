@@ -103,10 +103,22 @@ def list_events():
 @app.route("/api/1/module_send", methods=['POST'])
 def recieve_data():
     data = request.json
+    try:
+        author = data['author']
+        module = data['name']
+    except (KeyError, TypeError):
+        abort(400)
+
+    try:
+        tags = data['tags']
+    except KeyError:
+        tags = []
+    else:
+        tags = tags.split(',')
     insert_raw_deployment(db.Session(),
-                          data['author'],
-                          data['name'],
-                          data['tags'].split(','),
+                          author,
+                          module,
+                          tags,
                           datetime.now())
     return 'True'
 
