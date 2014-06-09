@@ -3,9 +3,14 @@
 body { background-color: #F0F0F0; }
 td { cursor: pointer }
 
+/* navbar elements */
+
+#privacyButton { cursor: pointer; }
+#privacyButton:hover { color: #006600 !important; }
+
 /* Main page styling */
 
-.container { margin-left: 40px; }
+.container { margin-left: 50px; }
 
 .container,
 #moduleMainContainer {
@@ -16,7 +21,7 @@ td { cursor: pointer }
 
 .sectionTitle {
   margin-left: 10px;
-  color: #7C6AAB;
+  color: #006600;
 }
 
 .sectionSubHeader {
@@ -25,8 +30,37 @@ td { cursor: pointer }
 
 /* Module page styling */
 
+.emphasisWord {
+  color: #006600;
+}
+
+#moduleTitleContainer {
+  margin-left: 50px;
+}
+
+#moduleTitleContainer h2 {
+  margin-top: 5px;
+  margin-left: 10px;
+}
+
 #moduleHitCount {
   margin-left: 20px;
+}
+
+#deployTrendsContainer,
+#coreStatsContainer,
+#totalDeploysContainer,
+#dailyDeploysContainer {
+  height: 250px;
+}
+
+#dailyDeploysContainer {
+  margin-top: -120px;
+}
+
+#tagsChartContainer {
+  height: 400px;
+  display: inline;
 }
 
 /* Bootstrap overrides */
@@ -44,11 +78,15 @@ td { cursor: pointer }
   margin-left: 15px;
   color: black;
 }
-.navbar-brand:hover { color: #7C6AAB !important; }
+.navbar-brand:hover { color: #006600 !important; }
 .navbar-inverse .navbar-nav>li>a { color: black; }
 .navbar-inverse .navbar-nav>li>a:hover {
-  color: #7C6AAB !important;
+  color: #006600 !important;
   cursor: pointer;
+}
+
+#footer {
+  min-height: 25px;
 }
 
 /* End Bootstrap overrides */
