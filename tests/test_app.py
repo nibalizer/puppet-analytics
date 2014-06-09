@@ -13,6 +13,11 @@ def test_module_page_joe_notfound(app, session, author_joe):
     assert rv.status_code == 404
 
 
+def test_module_page_post(app, session, deployment_1):
+    rv = app.test_client().post('/joe/module_a', data={})
+    assert rv.status_code == 405
+
+
 def test_module_page_one_deployment(app, session, deployment_1):
     rv = app.test_client().get('/joe/module_a')
     assert rv.status_code == 200

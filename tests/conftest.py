@@ -9,6 +9,7 @@ from puppetanalytics.models import Author, Deployment, Module, Tag
 
 @pytest.fixture(scope='session')
 def app(request):
+    _app.testing = True
     _app.config.from_object('puppetanalytics.settings.TestingSettings')
     ctx = _app.app_context()
     ctx.push()
