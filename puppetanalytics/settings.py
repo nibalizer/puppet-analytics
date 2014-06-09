@@ -1,11 +1,14 @@
 class Settings(object):
     DEBUG = False
-    sqlite_db = 'sqlite:////tmp/puppetanalytics.sqlite'
+
+
+class DevelopmentSettings(Settings):
+    DEBUG = True
 
 
 class ProductionSettings(Settings):
     DEBUG = False
 
 
-class DevelopmentSettings(Settings):
-    DEBUG = True
+class TestingSettings(Settings):
+    DEBUG = False

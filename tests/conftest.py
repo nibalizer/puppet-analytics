@@ -1,8 +1,23 @@
 from datetime import datetime
+
 import pytest
 
 from puppetanalytics import db as _db
+from puppetanalytics.app import app as _app
 from puppetanalytics.models import Author, Deployment, Module, Tag
+
+
+@pytest.fixture(scope='session')
+def app(request):
+    _app.config.from_object('puppetanalytics.settings.TestingSettings')
+    ctx = _app.app_context()
+    ctx.push()
+
+    def teardown():
+        ctx.pop()
+
+    request.addfinalizer(teardown)
+    return _app
 
 
 @pytest.fixture(scope='function')
@@ -53,12 +68,32 @@ def tag_1(session):
 
 
 @pytest.fixture(scope='function')
+def tag_2(session):
+    tag_2 = Tag('tag_2')
+    session.add(tag_2)
+    session.commit()
+    return tag_2
+
+
+@pytest.fixture(scope='function')
 def deployment_1(session,
                  author_joe,
                  module_a,
                  tag_1):
     d = Deployment(author_joe.id, module_a.id, datetime.now())
     d.tags = [tag_1]
+    session.add(d)
+    session.commit()
+    return d
+
+
+@pytest.fixture(scope='function')
+def deployment_2(session,
+                 author_joe,
+                 module_a,
+                 tag_2):
+    d = Deployment(author_joe.id, module_a.id, datetime.now())
+    d.tags = [tag_2]
     session.add(d)
     session.commit()
     return d

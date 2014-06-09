@@ -1,7 +1,10 @@
 from datetime import datetime
 import os
 
-from flask import Flask, request, render_template
+from flask import (abort,
+                   Flask,
+                   request,
+                   render_template)
 
 import db
 from dbapi import (get_all_authors_count,
@@ -44,6 +47,9 @@ def module_page(author, module):
     deployments = get_deployments_by_author_module(db.Session(),
                                                    author,
                                                    module)
+
+    if len(deployments) == 0:
+        return abort(404)
 
     module_downloads = []
     for deployment in deployments:
@@ -97,10 +103,22 @@ def list_events():
 @app.route("/api/1/module_send", methods=['POST'])
 def recieve_data():
     data = request.json
+    try:
+        author = data['author']
+        module = data['name']
+    except (KeyError, TypeError):
+        abort(400)
+
+    try:
+        tags = data['tags']
+    except KeyError:
+        tags = []
+    else:
+        tags = tags.split(',')
     insert_raw_deployment(db.Session(),
-                          data['author'],
-                          data['name'],
-                          data['tags'].split(','),
+                          author,
+                          module,
+                          tags,
                           datetime.now())
     return 'True'
 
