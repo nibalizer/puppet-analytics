@@ -1,11 +1,10 @@
+[![Build Status](https://travis-ci.org/nibalizer/puppet-analytics.png?branch=master)](https://travis-ci.org/nibalizer/puppet-analytics)
 
 puppet analytics
 ================
 
-A web application to collect and display stats on puppet modules
-
-
-Requires an elasticsearch running on localhost:9200
+A web application to collect and display statistics on puppet modules.
+See it live at [http://puppet-analytics.org](http://puppet-analytics.org)
 
 
 
@@ -31,3 +30,13 @@ To submit a module deploy event to puppet analytics, send a curl request like th
 }'
 True[nibz@nexus ~]$
 ```
+
+
+
+Development
+-----------
+
+We congregate on freenode irc in ##puppet-analytics
+
+
+
