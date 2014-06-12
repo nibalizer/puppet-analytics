@@ -20,4 +20,4 @@ def test_module_send_valid(app, session):
     assert deployments[0].author.name == 'bob'
     assert deployments[0].module.name == 'somemodule'
     assert set([x.value for x in deployments[0].tags])\
-            == set(['tag_foo', 'tag_bar'])
+        == set(['tag_foo', 'tag_bar'])
