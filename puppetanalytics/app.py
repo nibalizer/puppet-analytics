@@ -115,11 +115,15 @@ def recieve_data():
         tags = []
     else:
         tags = tags.split(',')
+    try:
+        date = datetime.fromtimestamp(float(data['date']))
+    except (KeyError):
+        date = datetime.now()
     insert_raw_deployment(db.Session(),
                           author,
                           module,
                           tags,
-                          datetime.now())
+                          date)
     return 'True'
 
 
