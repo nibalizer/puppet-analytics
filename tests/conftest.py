@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 
@@ -106,7 +106,7 @@ def deployment_3(session,
                  module_a,
                  tag_2):
     d = Deployment(author_joe.id, module_a.id,
-                   datetime.now() - datetime.timedelta(days=1))
+                   datetime.now() - timedelta(days=1))
     d.tags = [tag_2]
     session.add(d)
     session.commit()
