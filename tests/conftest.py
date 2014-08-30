@@ -98,3 +98,16 @@ def deployment_2(session,
     session.add(d)
     session.commit()
     return d
+
+
+@pytest.fixture(scope='function')
+def deployment_3(session,
+                 author_joe,
+                 module_a,
+                 tag_2):
+    d = Deployment(author_joe.id, module_a.id,
+                   datetime.now() - datetime.timedelta(days=1))
+    d.tags = [tag_2]
+    session.add(d)
+    session.commit()
+    return d
