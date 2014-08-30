@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 import os
 
 from flask import (abort,
@@ -16,6 +16,13 @@ from dbapi import (get_all_authors_count,
                    insert_raw_deployment)
 
 app = Flask(__name__)
+
+def divtd(td1, td2):
+    if isinstance(td2, (int, long)):
+        return divtdi(td1, td2)
+    us1 = td1.microseconds + 1000000 * (td1.seconds + 86400 * td1.days)
+    us2 = td2.microseconds + 1000000 * (td2.seconds + 86400 * td2.days)
+    return us1 / us2 # this does integer division, use float(us1) / us2 for fp division
 
 
 @app.route("/")
@@ -51,40 +58,62 @@ def module_page(author, module):
     if len(deployments) == 0:
         return abort(404)
 
-    module_downloads = []
+    module_deploys = []
     for deployment in deployments:
-        module_downloads.append({
+        module_deploys.append({
             'timestamp': deployment.occured_at,
             'author': deployment.author.name,
             'name': deployment.module.name,
             'tags': [x.value for x in deployment.tags]
         })
 
-    # Divide all deploys into five buckets, send to c3.js
+    # Divide all deploys into 7 24 hour buckets, send to c3.js
 
+    # Theoretically can change graphing window to be anything
     bucket_number = 7
-    times = [i['timestamp'] for i in module_downloads]
-    times.sort()
-    base = min(times)
-    diff = datetime.now() - base
-    delta = diff / bucket_number
-    buckets = [0] * bucket_number
-    for time in times:
-        index = (time - base).microseconds / delta.microseconds
-        buckets[index] += 1
 
-    ys = buckets
+    # The x/y values we will return
+    # X values are the unix seconds of the start of the day
+    # Y values are number of deploys on the day
     xs = []
-    for x in range(bucket_number):
-        xs.append(int((base + (delta * x)).strftime('%s')))
+    ys = []
+
+    now = datetime.datetime.utcnow()
+
+    day = datetime.timedelta(days=1)
+
+    # Build bucket_number range of times
+    # initialize x values with zero
+    for i in range(bucket_number):
+        ys.append(0)
+        t = now - (day * (i+1))
+        #from pdb import set_trace; set_trace()
+        xs.append(int(t.strftime('%s')))
+
+    cutoff_time = now - (day * bucket_number)  # We dont want any deploys before this time
+
+    # Put each deploy into a bucket using division
+    # Custom timedelta divison because
+    # timedelta has now __div__
+    for deploy in module_deploys:
+        if deploy['timestamp'] < cutoff_time:
+            continue
+        day_num = divtd((deploy['timestamp'] - cutoff_time),  day)
+        ys[day_num] += 1
+
+
+    # Finally we reverse the lists so that the graph
+    # reads from left to right
+    xs = xs[::-1]
+
 
     return render_template('module.html',
                            xs=xs,
                            ys=ys,
                            author=author,
                            modulename=module,
-                           hits=len(module_downloads),
-                           module_downloads=module_downloads)
+                           hits=len(module_deploys),
+                           module_downloads=module_deploys)
 
 
 @app.route("/add_dummy")
@@ -97,7 +126,7 @@ def add_dummy():
                           'nibz',
                           'puppetboard',
                           ['awesome', 'ci', 'production'],
-                          datetime.utcnow())
+                          datetime.datetime.utcnow())
     return 'True'
 
 
@@ -136,9 +165,9 @@ def recieve_data():
     else:
         tags = tags.split(',')
     try:
-        date = datetime.utcfromtimestamp(float(data['date']))
+        date = datetime.datetime.utcfromtimestamp(float(data['date']))
     except (KeyError):
-        date = datetime.utcnow()
+        date = datetime.datetime.utcnow()
     insert_raw_deployment(db.Session(),
                           author,
                           module,
