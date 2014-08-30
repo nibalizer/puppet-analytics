@@ -29,3 +29,15 @@ def test_module_page_multiple_deployments(app,
                                           deployment_2):
     rv = app.test_client().get('/joe/module_a')
     assert rv.status_code == 200
+
+
+def test_module_page_and_graph_multiple_deployments(app,
+                                                    session,
+                                                    deployment_1,
+                                                    deployment_2):
+    rv = app.test_client().get('/joe/module_a')
+    # Verify it is attempting to create a graph
+    assert str(rv.data).find('createDeployTrendsGraph') != -1
+    # Verify the graph is given the right inputs
+    assert str(rv.data).find('[0, 0, 0, 0, 0, 0, 2]') != -1
+    # This obviously isn't perfect, but better than nothing

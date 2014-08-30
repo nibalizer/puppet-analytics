@@ -17,12 +17,11 @@ from dbapi import (get_all_authors_count,
 
 app = Flask(__name__)
 
+
 def divtd(td1, td2):
-    if isinstance(td2, (int, long)):
-        return divtdi(td1, td2)
     us1 = td1.microseconds + 1000000 * (td1.seconds + 86400 * td1.days)
     us2 = td2.microseconds + 1000000 * (td2.seconds + 86400 * td2.days)
-    return us1 / us2 # this does integer division, use float(us1) / us2 for fp division
+    return us1 / us2
 
 
 @app.route("/")
@@ -86,11 +85,11 @@ def module_page(author, module):
     # initialize x values with zero
     for i in range(bucket_number):
         ys.append(0)
-        t = now - (day * (i+1))
-        #from pdb import set_trace; set_trace()
+        t = now - (day * (i + 1))
         xs.append(int(t.strftime('%s')))
 
-    cutoff_time = now - (day * bucket_number)  # We dont want any deploys before this time
+    # We dont want any deploys before this time
+    cutoff_time = now - (day * bucket_number)
 
     # Put each deploy into a bucket using division
     # Custom timedelta divison because
@@ -98,14 +97,12 @@ def module_page(author, module):
     for deploy in module_deploys:
         if deploy['timestamp'] < cutoff_time:
             continue
-        day_num = divtd((deploy['timestamp'] - cutoff_time),  day)
+        day_num = divtd((deploy['timestamp'] - cutoff_time), day)
         ys[day_num] += 1
-
 
     # Finally we reverse the lists so that the graph
     # reads from left to right
     xs = xs[::-1]
-
 
     return render_template('module.html',
                            xs=xs,
