@@ -111,3 +111,26 @@ def deployment_3(session,
     session.add(d)
     session.commit()
     return d
+
+
+@pytest.fixture(scope='function')
+def deployments_many(session,
+                     author_joe,
+                     module_a,
+                     tag_2):
+
+    # Experimental do not use
+    # Build an array of tuples of times and numbers of deploys
+    # Reverse index, so a time of 1.37 means 1.37 days before
+    # The current time
+
+    deployment_array = [
+    ]
+    deployment_array.append(1)
+
+    d = Deployment(author_joe.id, module_a.id,
+                   datetime.now() - timedelta(days=1))
+    d.tags = [tag_2]
+    session.add(d)
+    session.commit()
+    return d
