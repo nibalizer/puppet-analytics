@@ -77,7 +77,7 @@ def add_dummy():
                           'nibz',
                           'puppetboard',
                           ['awesome', 'ci', 'production'],
-                          datetime.now())
+                          datetime.utcnow())
     return 'True'
 
 
@@ -116,9 +116,9 @@ def recieve_data():
     else:
         tags = tags.split(',')
     try:
-        date = datetime.fromtimestamp(float(data['date']))
+        date = datetime.utcfromtimestamp(float(data['date']))
     except (KeyError):
-        date = datetime.now()
+        date = datetime.utcnow()
     insert_raw_deployment(db.Session(),
                           author,
                           module,
