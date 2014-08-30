@@ -1,10 +1,11 @@
 from datetime import datetime
 
+
 from puppetanalytics.dbapi import (get_all_authors_count,
                                    get_all_deployments,
                                    get_all_deployments_count,
                                    get_all_module_author_combination_count,
-                                   get_deployments_by_author_module,
+                                   get_deploys_by_author_module_after_date,
                                    get_deployments_by_module,
                                    insert_raw_deployment)
 
@@ -43,19 +44,26 @@ def test_get_deployments_by_module(session, deployment_1):
     assert len(deps) == 0
 
 
-def test_get_deployments_by_author_module(session, deployment_1):
-    deps = get_deployments_by_author_module(session, 'joe', 'module_a')
+def test_get_deploys_by_author_module_after_date(session,
+                                                 deployment_1):
+    deps = get_deploys_by_author_module_after_date(session,
+                                                   'joe',
+                                                   'module_a')
     assert len(deps) == 1
 
-    deps = get_deployments_by_author_module(session, 'joe', 'nonexistent')
+    deps = get_deploys_by_author_module_after_date(session,
+                                                   'joe',
+                                                   'nonexistent')
     assert len(deps) == 0
 
-    deps = get_deployments_by_author_module(session, 'nonexistent', 'module_a')
+    deps = get_deploys_by_author_module_after_date(session,
+                                                   'nonexistent',
+                                                   'module_a')
     assert len(deps) == 0
 
 
 def test_insert_raw_deployment(session):
-    now = datetime.now()
+    now = datetime.utcnow()
     d = insert_raw_deployment(session, 'joe', 'newmodule',
                               ['tag1', 'tag2'], now)
     assert d.author.name == 'joe'
@@ -64,13 +72,13 @@ def test_insert_raw_deployment(session):
 
 def test_insert_raw_deployment_dup_author(session, author_joe):
     d = insert_raw_deployment(session, 'joe', 'newmodule',
-                              ['tag1', 'tag2'], datetime.now())
+                              ['tag1', 'tag2'], datetime.utcnow())
     assert d.author.name == 'joe'
     assert set([x.value for x in d.tags]) == set(['tag1', 'tag2'])
 
 
 def test_insert_raw_deployment_dup_tag(session, tag_1):
     d = insert_raw_deployment(session, 'joe', 'newmodule',
-                              ['tag1', 'tag2'], datetime.now())
+                              ['tag1', 'tag2'], datetime.utcnow())
     assert d.author.name == 'joe'
     assert set([x.value for x in d.tags]) == set(['tag1', 'tag2'])

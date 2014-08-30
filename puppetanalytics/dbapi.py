@@ -1,4 +1,4 @@
-from sqlalchemy import func
+from sqlalchemy import func, desc
 from sqlalchemy.exc import IntegrityError
 
 from models import Author, Deployment, Module, Tag
@@ -33,13 +33,22 @@ def get_deployments_by_module(session, module_name):
         filter(Module.name == module_name).all()
 
 
-def get_deployments_by_author_module(session, author_name, module_name):
-    return session.query(Deployment).\
+def get_deploys_by_author_module_after_date(session,
+                                            author_name,
+                                            module_name,
+                                            after_date=None):
+    resp = session.query(Deployment).\
         join(Deployment.author).\
         join(Deployment.module).\
         join(Deployment.tags).\
         filter(Author.name == author_name).\
-        filter(Module.name == module_name).all()
+        filter(Module.name == module_name).\
+        order_by(desc(Deployment.occured_at))
+
+    if after_date is not None:
+        resp = resp.filter(Deployment.occured_at > after_date)
+
+    return resp.all()
 
 
 def get_deployment_count_for_all_author_modules(session):
