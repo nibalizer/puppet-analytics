@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 
@@ -33,19 +35,10 @@ def get_deployments_by_module(session, module_name):
         filter(Module.name == module_name).all()
 
 
-def get_deployments_by_author_module(session, author_name, module_name):
-    return session.query(Deployment).\
-        join(Deployment.author).\
-        join(Deployment.module).\
-        join(Deployment.tags).\
-        filter(Author.name == author_name).\
-        filter(Module.name == module_name).all()
-
-
-def get_deployments_by_author_module_date(session,
-                                          author_name,
-                                          module_name,
-                                          date):
+def get_deployments_by_author_module(session,
+                                     author_name,
+                                     module_name,
+                                     date=datetime.datetime(1970, 1, 1, 0, 0)):
     return session.query(Deployment).\
         join(Deployment.author).\
         join(Deployment.module).\

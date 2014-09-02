@@ -11,7 +11,7 @@ from dbapi import (get_all_authors_count,
                    get_all_deployments,
                    get_all_deployments_count,
                    get_all_module_author_combination_count,
-                   get_deployments_by_author_module_date,
+                   get_deployments_by_author_module,
                    get_deployment_count_for_all_author_modules,
                    insert_raw_deployment)
 
@@ -49,10 +49,10 @@ def module_page(author, module):
     today_begins = datetime.datetime(now.year, now.month, now.day)
     start_date = today_begins - datetime.timedelta(days=7)
 
-    deployments = get_deployments_by_author_module_date(db.Session(),
-                                                        author,
-                                                        module,
-                                                        start_date)
+    deployments = get_deployments_by_author_module(db.Session(),
+                                                   author,
+                                                   module,
+                                                   start_date)
 
     if len(deployments) == 0:
         return abort(404)
@@ -83,12 +83,8 @@ def module_page(author, module):
     # initialize x values with zero
     for i in range(bucket_number):
         ys.append(0)
-        t = now - (day * (i))
+        t = now - (day * (bucket_number - i))
         xs.append(int(t.strftime('%s')))
-    # we reverse the xs so that the graph
-    # reads from left to right
-    # probably should fix the above code
-    xs = xs[::-1]
 
     # Put each deploy into a bucket
     day_num = 0
