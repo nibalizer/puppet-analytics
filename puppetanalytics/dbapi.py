@@ -42,6 +42,21 @@ def get_deployments_by_author_module(session, author_name, module_name):
         filter(Module.name == module_name).all()
 
 
+def get_deployments_by_author_module_date(session,
+                                          author_name,
+                                          module_name,
+                                          date):
+    return session.query(Deployment).\
+        join(Deployment.author).\
+        join(Deployment.module).\
+        join(Deployment.tags).\
+        filter(Deployment.occured_at > date).\
+        filter(Author.name == author_name).\
+        filter(Module.name == module_name).\
+        order_by(Deployment.occured_at).\
+        all()
+
+
 def get_deployment_count_for_all_author_modules(session):
     return session.query(func.count(Deployment.id),
                          Deployment).\

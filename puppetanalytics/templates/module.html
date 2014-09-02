@@ -26,6 +26,15 @@
   <div id='dailyDeploysContainer' class='col-md-5 container'>
     <h4 class='sectionTitle'>Daily Stats</h4>
   </div>
+  <div id='deployRawOutput' class='col-md-5 container'>
+    <h4 class='sectionTitle'>Daily Stats</h4>
+    <p>
+    <ul id="deploy_list" >
+    {% for deploy in module_deploys %}
+      <li>{{ deploy.author }} {{ deploy.name }} {{ deploy.timestamp }} {{ deploy.tags }}</li>
+    {% endfor %}
+    </ul>
+  </div>
 </div>
 <script>
   $(document).ready(function() {

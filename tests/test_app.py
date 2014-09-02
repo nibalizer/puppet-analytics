@@ -39,7 +39,7 @@ def test_module_page_and_graph_multiple_deployments(app,
     # Verify it is attempting to create a graph
     assert str(rv.data).find('createDeployTrendsGraph') != -1
     # Verify the graph is given the right inputs
-    assert str(rv.data).find('[0, 0, 0, 0, 0, 0, 2]') != -1
+    assert str(rv.data).find('[0, 0, 0, 0, 0, 2, 0]') != -1
     # This obviously isn't perfect, but better than nothing
 
 
@@ -50,7 +50,7 @@ def test_graph_relative_time(app,
     # Verify it is attempting to create a graph
     assert str(rv.data).find('createDeployTrendsGraph') != -1
     # Verify the graph is given the right inputs
-    assert str(rv.data).find('[0, 0, 0, 0, 0, 1, 0]') != -1
+    assert str(rv.data).find('[0, 0, 0, 0, 1, 0, 0]') != -1
     # This is better than the above test because the deployment
     # Time in deploy 3 is set to be 24 hrs before. So if the graph
     # Comes out looking like this ^^ we're in pretty good shape

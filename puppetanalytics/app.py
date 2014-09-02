@@ -11,17 +11,11 @@ from dbapi import (get_all_authors_count,
                    get_all_deployments,
                    get_all_deployments_count,
                    get_all_module_author_combination_count,
-                   get_deployments_by_author_module,
+                   get_deployments_by_author_module_date,
                    get_deployment_count_for_all_author_modules,
                    insert_raw_deployment)
 
 app = Flask(__name__)
-
-
-def divtd(td1, td2):
-    us1 = td1.microseconds + 1000000 * (td1.seconds + 86400 * td1.days)
-    us2 = td2.microseconds + 1000000 * (td2.seconds + 86400 * td2.days)
-    return us1 / us2
 
 
 @app.route("/")
@@ -50,9 +44,15 @@ def module_page(author, module):
     """
     Page to display a modules stats/data
     """
-    deployments = get_deployments_by_author_module(db.Session(),
-                                                   author,
-                                                   module)
+
+    now = datetime.datetime.utcnow()
+    today_begins = datetime.datetime(now.year, now.month, now.day)
+    start_date = today_begins - datetime.timedelta(days=7)
+
+    deployments = get_deployments_by_author_module_date(db.Session(),
+                                                        author,
+                                                        module,
+                                                        start_date)
 
     if len(deployments) == 0:
         return abort(404)
@@ -77,32 +77,35 @@ def module_page(author, module):
     xs = []
     ys = []
 
-    now = datetime.datetime.utcnow()
-
     day = datetime.timedelta(days=1)
 
     # Build bucket_number range of times
     # initialize x values with zero
     for i in range(bucket_number):
         ys.append(0)
-        t = now - (day * (i + 1))
+        t = now - (day * (i))
         xs.append(int(t.strftime('%s')))
-
-    # We dont want any deploys before this time
-    cutoff_time = now - (day * bucket_number)
-
-    # Put each deploy into a bucket using division
-    # Custom timedelta divison because
-    # timedelta has now __div__
-    for deploy in module_deploys:
-        if deploy['timestamp'] < cutoff_time:
-            continue
-        day_num = divtd((deploy['timestamp'] - cutoff_time), day)
-        ys[day_num] += 1
-
-    # Finally we reverse the lists so that the graph
+    # we reverse the xs so that the graph
     # reads from left to right
+    # probably should fix the above code
     xs = xs[::-1]
+
+    # Put each deploy into a bucket
+    day_num = 0
+    moving_date = today_begins
+    # Pop deploys off, earliest first
+    for deploy in module_deploys[::-1]:
+        Success = False
+        while not Success:
+            if deploy['timestamp'] > moving_date:
+                ys[day_num] += 1
+                Success = True
+            else:
+                day_num += 1
+                moving_date -= day
+
+    # Reverse ys(deploys per day) so they go the correct direction
+    ys = ys[::-1]
 
     return render_template('module.html',
                            xs=xs,
@@ -110,7 +113,7 @@ def module_page(author, module):
                            author=author,
                            modulename=module,
                            hits=len(module_deploys),
-                           module_downloads=module_deploys)
+                           module_deploys=module_deploys)
 
 
 @app.route("/add_dummy")
