@@ -17,6 +17,7 @@
     <li>Downloads in time period: <b>{{ hits }} </b></li>
     <li>Forge: <a href="https://forge.puppetlabs.com/{{author}}/{{modulename}}"> {{author}}/{{modulename}}</a></li>
     <li>Travis:  <a href="https://travis-ci.org/{{author}}/puppet-{{modulename}}"><img src="https://travis-ci.org/{{author}}/puppet-{{modulename}}.png" alt="Travis Badge"></a></li>
+    <li>All times are UTC</li>
     </ul>
 
     </ul>
@@ -27,6 +28,11 @@
   </div>
   <div id='tagsChartContainer' class='col-md-5 container'>
     <h4 class='sectionTitle'>Tag Stats</h4>
+    <ul>
+    {% for ver, num in versions.iteritems() %}
+    <li>Version: {{ ver }} Count: {{ num }}</li>
+    {% endfor %}
+    <ul>
   </div>
 
   <div id='dailyDeploysContainer' class='col-md-5 container'>

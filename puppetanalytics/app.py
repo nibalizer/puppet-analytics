@@ -1,3 +1,4 @@
+import collections
 import datetime
 import os
 
@@ -57,14 +58,24 @@ def module_page(author, module):
     if len(deployments) == 0:
         return abort(404)
 
+    #from pdb import set_trace; set_trace()
     module_deploys = []
     for deployment in deployments:
-        module_deploys.append({
+        deploy = {
             'timestamp': deployment.occured_at,
             'author': deployment.author.name,
-            'name': deployment.module.name,
-            'tags': [x.value for x in deployment.tags]
-        })
+            'name': deployment.module.name
+        }
+        tags = {}
+        for tag in deployment.tags:
+            try:
+                a, b = tag.value.split('=')
+                tags[a] = b
+            except ValueError:
+                tags[tag.value] = tag.value
+        deploy['tags'] = tags
+
+        module_deploys.append(deploy)
 
     # Divide all deploys into 7 24 hour buckets, send to c3.js
 
@@ -76,6 +87,7 @@ def module_page(author, module):
     # Y values are number of deploys on the day
     xs = []
     ys = []
+    versions = collections.defaultdict(int)
 
     day = datetime.timedelta(days=1)
 
@@ -96,6 +108,10 @@ def module_page(author, module):
             if deploy['timestamp'] > moving_date:
                 ys[-1 * (day_num + 1)] += 1
                 Success = True
+                try:
+                    versions[deploy['tags']['version']] += 1
+                except KeyError:
+                    pass
             else:
                 day_num += 1
                 moving_date -= day
@@ -103,6 +119,7 @@ def module_page(author, module):
     return render_template('module.html',
                            xs=xs,
                            ys=ys,
+                           versions=versions,
                            author=author,
                            modulename=module,
                            hits=len(module_deploys),
