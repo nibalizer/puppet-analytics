@@ -94,14 +94,11 @@ def module_page(author, module):
         Success = False
         while not Success:
             if deploy['timestamp'] > moving_date:
-                ys[day_num] += 1
+                ys[-1 * (day_num + 1)] += 1
                 Success = True
             else:
                 day_num += 1
                 moving_date -= day
-
-    # Reverse ys(deploys per day) so they go the correct direction
-    ys = ys[::-1]
 
     return render_template('module.html',
                            xs=xs,
