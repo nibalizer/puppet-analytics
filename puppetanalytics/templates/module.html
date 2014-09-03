@@ -13,7 +13,10 @@
   </div>
   <div id='coreStatsContainer' class='col-md-5 container'>
     <h4 class='sectionTitle'>Core Stats</h4>
-    <b> Total Hits: {{ hits }} </b>
+    <ul>
+    <li>Downloads in time period: <b>{{ hits }} </b></li>
+    <li>Forge: <a href="https://forge.puppetlabs.com/{{author}}/{{modulename}}"> {{author}}/{{modulename}}</a></li>
+    </ul>
   </div>
 
   <div id='totalDeploysContainer' class='col-md-5 container'>
