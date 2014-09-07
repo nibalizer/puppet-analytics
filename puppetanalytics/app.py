@@ -32,6 +32,8 @@ def mainpage():
                    agg[1].author.name,
                    agg[1].module.name) for agg in aggregates]
 
+    aggregates = sorted(aggregates, key=lambda agg: agg[0])[::1]
+
     return render_template('mainpage.html',
                            total_downloads=total_downloads,
                            total_authors=total_authors,
