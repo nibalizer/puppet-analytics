@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 import os
 
 from flask import (abort,
@@ -11,7 +11,7 @@ from dbapi import (get_all_authors_count,
                    get_all_deployments,
                    get_all_deployments_count,
                    get_all_module_author_combination_count,
-                   get_deployments_by_author_module,
+                   get_deploys_by_author_module_after_date,
                    get_deployment_count_for_all_author_modules,
                    insert_raw_deployment)
 
@@ -44,27 +44,69 @@ def module_page(author, module):
     """
     Page to display a modules stats/data
     """
-    deployments = get_deployments_by_author_module(db.Session(),
-                                                   author,
-                                                   module)
+
+    now = datetime.datetime.utcnow()
+    today_begins = datetime.datetime(now.year, now.month, now.day)
+    start_date = today_begins - datetime.timedelta(days=7)
+
+    deployments = get_deploys_by_author_module_after_date(db.Session(),
+                                                          author,
+                                                          module,
+                                                          start_date)
 
     if len(deployments) == 0:
         return abort(404)
 
-    module_downloads = []
+    module_deploys = []
     for deployment in deployments:
-        module_downloads.append({
+        module_deploys.append({
             'timestamp': deployment.occured_at,
             'author': deployment.author.name,
             'name': deployment.module.name,
             'tags': [x.value for x in deployment.tags]
         })
 
+    # Divide all deploys into 7 24 hour buckets, send to c3.js
+
+    # Theoretically can change graphing window to be anything
+    bucket_number = 7
+
+    # The x/y values we will return
+    # X values are the unix seconds of the start of the day
+    # Y values are number of deploys on the day
+    xs = []
+    ys = []
+
+    day = datetime.timedelta(days=1)
+
+    # Build bucket_number range of times
+    # initialize x values with zero
+    for i in range(bucket_number + 1):
+        ys.append(0)
+        t = now - (day * (bucket_number - i))
+        xs.append(int(t.strftime('%s')))
+
+    # Put each deploy into a bucket
+    day_num = 0
+    moving_date = today_begins
+    # Pop deploys off, earliest first
+    for deploy in module_deploys:
+        Success = False
+        while not Success:
+            if deploy['timestamp'] > moving_date:
+                ys[-1 * (day_num + 1)] += 1
+                Success = True
+            else:
+                day_num += 1
+                moving_date -= day
+
     return render_template('module.html',
+                           xs=xs,
+                           ys=ys,
                            author=author,
                            modulename=module,
-                           hits=len(module_downloads),
-                           module_downloads=module_downloads)
+                           hits=len(module_deploys),
+                           module_deploys=module_deploys)
 
 
 @app.route("/add_dummy")
@@ -77,7 +119,7 @@ def add_dummy():
                           'nibz',
                           'puppetboard',
                           ['awesome', 'ci', 'production'],
-                          datetime.now())
+                          datetime.datetime.utcnow())
     return 'True'
 
 
@@ -119,7 +161,7 @@ def recieve_data():
                           author,
                           module,
                           tags,
-                          datetime.now())
+                          datetime.datetime.utcnow())
     return 'True'
 
 

@@ -1,27 +1,50 @@
 {% extends "layout.html" %}
 {% block body %}
-<div id='mainContentContainer'>
 
+<script src="{{ url_for('static', filename='js/graphs.js') }}"></script>
+<div id='mainContentContainer'>
   <div id='moduleTitleContainer' class='col-md-10 container'>
     <h2><span class='emphasisWord'>{{ modulename }}</span> module, authored by <span class='emphasisWord'>{{ author }}</span></h2>
   </div>
 
   <div id='deployTrendsContainer' class='col-md-5 container'>
-    <h3 class='sectionTitle'>Deployment Trends</h3>
+    <h4 class='sectionTitle'>Deployments over last 7 Days</h4>
+    <div id='deployTrendsGraph'></div>
   </div>
   <div id='coreStatsContainer' class='col-md-5 container'>
-    <h3 class='sectionTitle'>Core Stats</h3>
+    <h4 class='sectionTitle'>Core Stats</h4>
+    <ul>
+    <li>Downloads in time period: <b>{{ hits }} </b></li>
+    <li>Forge: <a href="https://forge.puppetlabs.com/{{author}}/{{modulename}}"> {{author}}/{{modulename}}</a></li>
+    <li>Travis:  <a href="https://travis-ci.org/{{author}}/puppet-{{modulename}}"><img src="https://travis-ci.org/{{author}}/puppet-{{modulename}}.png" alt="Travis Badge"></a></li>
+    </ul>
+
+    </ul>
   </div>
 
   <div id='totalDeploysContainer' class='col-md-5 container'>
-    <h3 class='sectionTitle'>Total Deployments</h3>
+    <h4 class='sectionTitle'>Total Deployments</h4>
   </div>
   <div id='tagsChartContainer' class='col-md-5 container'>
-    <h3 class='sectionTitle'>Tag Stats</h3>
+    <h4 class='sectionTitle'>Tag Stats</h4>
   </div>
 
   <div id='dailyDeploysContainer' class='col-md-5 container'>
-    <h3 class='sectionTitle'>Daily Stats</h3>
+    <h4 class='sectionTitle'>Daily Stats</h4>
+  </div>
+  <div id='deployRawOutput' class='col-md-5 container'>
+    <h4 class='sectionTitle'>Daily Stats</h4>
+    <p>
+    <ul id="deploy_list" >
+    {% for deploy in module_deploys %}
+      <li>{{ deploy.author }} {{ deploy.name }} {{ deploy.timestamp }} {{ deploy.tags }}</li>
+    {% endfor %}
+    </ul>
   </div>
 </div>
+<script>
+  $(document).ready(function() {
+    createDeployTrendsGraph("#deployTrendsGraph", {{ xs }}, {{ ys }})
+  })
+</script>
 {% endblock %}

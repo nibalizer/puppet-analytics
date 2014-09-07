@@ -19,6 +19,10 @@ td { cursor: pointer }
   background-color: white;
 }
 
+#privacyModalLabel {
+  color: #006600;
+}
+
 .sectionTitle {
   margin-left: 10px;
   color: #006600;
@@ -43,6 +47,11 @@ td { cursor: pointer }
   margin-left: 10px;
 }
 
+#deployTrendsGraph {
+  height: 85%;
+  width: 100%;
+}
+
 #moduleHitCount {
   margin-left: 20px;
 }
@@ -50,17 +59,9 @@ td { cursor: pointer }
 #deployTrendsContainer,
 #coreStatsContainer,
 #totalDeploysContainer,
-#dailyDeploysContainer {
-  height: 250px;
-}
-
-#dailyDeploysContainer {
-  margin-top: -120px;
-}
-
+#dailyDeploysContainer,
 #tagsChartContainer {
-  height: 400px;
-  display: inline;
+  height: 300px;
 }
 
 /* Bootstrap overrides */
