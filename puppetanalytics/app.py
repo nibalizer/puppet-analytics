@@ -1,9 +1,11 @@
 import datetime
 import os
+import requests
 
 from flask import (abort,
                    Flask,
                    request,
+                   make_response,
                    render_template)
 
 import db
@@ -37,6 +39,45 @@ def mainpage():
                            total_authors=total_authors,
                            total_modules=total_modules,
                            deploy_aggregates=aggregates)
+
+
+@app.route("/shields/<author>/<module>/<days>")
+def downloads_shield(author, module, days):
+    """
+    Return download count shield
+    """
+
+    days = int(days)
+
+    now = datetime.datetime.utcnow()
+    today_begins = datetime.datetime(now.year, now.month, now.day)
+    start_date = today_begins - datetime.timedelta(days=days)
+
+    deployments = get_deploys_by_author_module_after_date(db.Session(),
+                                                          author,
+                                                          module,
+                                                          start_date)
+
+    count = len(deployments)
+    if days == 7:
+        period = "week"
+    elif 28 < days < 31:
+        period = "month"
+    else:
+        period = "last {0} days".format(days)
+
+    r = requests.get(("http://img.shields.io/badge/downloads-"
+                     "{0}/{1}"
+                     "-brightgreen.svg").format(count, period))
+
+    if r.ok is True:
+        response = make_response(r.content)
+        response.headers['Cache-Control'] = 'public, max-age=86400'
+        response.headers['Content-Type'] = 'image/svg+xml;charset=utf-8'
+
+        return response
+    else:
+        return ""
 
 
 @app.route("/<author>/<module>")
