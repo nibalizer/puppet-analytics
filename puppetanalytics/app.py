@@ -67,8 +67,8 @@ def downloads_shield(author, module, days):
         period = "last {0} days".format(days)
 
     r = requests.get(("http://img.shields.io/badge/downloads-"
-                     "{0}/{1}"
-                     "-brightgreen.svg").format(count, period))
+                      "{0}/{1}"
+                      "-brightgreen.svg").format(count, period))
 
     if r.ok is True:
         response = make_response(r.content)
